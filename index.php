@@ -122,16 +122,33 @@ if ($user) {
 		<?php else: ?>
 
 <?php
+################## GET SNAPCHAT FRIENDS ###########################
+
 $snapFriends = [];
 foreach($snapchat->getFriends() as $friend) {
 	$snapFriends[$friend->name] = TRUE;
 }
 ?>
 
+
+
+<?php
+################# GET #BOATSNAP MEMBER IDS ########################
+try {
+	$members = $facebook->api('/144692042393217/members');
+	var_dump($members);
+}
+catch(FacebookApiException $e) {
+	d($e);
+}
+?>
+
+
 <div class="table-responsive">
 	<table class="table-hover" id="users">
 		<tbody>
 <?php
+################ BUILD TABLE ###################################
 
 $sql = <<<SQL
 	SELECT *
