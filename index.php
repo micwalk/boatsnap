@@ -67,7 +67,7 @@ if($db->connect_errno > 0) {
 }
 
 
-if(isset($user_profile['id']) && $stmt = $db->prepare("SELECT user_id, snapchat_username FROM user WHERE facebook_id = ? ORDER BY date_updated DESC")) {
+if(isset($user_profile['id']) && $stmt = $db->prepare("SELECT user_id, snapchat_username, hidden FROM user WHERE facebook_id = ? ORDER BY date_updated DESC")) {
 	$stmt->bind_param("s", $user_profile['id']);
 	$stmt->execute();
 	$stmt->store_result();
@@ -79,7 +79,7 @@ if(isset($user_profile['id']) && $stmt = $db->prepare("SELECT user_id, snapchat_
 		}
 	}
 	else {
-		$stmt->bind_result($user_id, $stored_username);
+		$stmt->bind_result($user_id, $stored_username, $hidden);
 		$stmt->fetch();
 	}
 	$stmt->close();
@@ -103,15 +103,11 @@ if(isset($user_id)) {
     	<link href="css/bootstrap.min.css" rel="stylesheet">
 		<link href="css/stickyfooter.css" rel="stylesheet">
 		<link href="css/bootstrap-switch.css" rel="stylesheet">
+		<link href="css/bootstrap-tour.min.css" rel="stylesheet">
 		<style>
 #users td {
 	padding-right: 10px;
-	min-height: 50px;
 }
-#users th {
-	min-height: 50px;
-}
-
 		</style>
 	</head>
 
@@ -200,6 +196,16 @@ catch(FacebookApiException $e) {
 <div class="table-responsive">
 	<table class="table-hover" id="users">
 		<tbody>
+			<tr>
+				<td><a href="//facebook.com/<?=$user_profile['id']?>" target="_blank"><img src="//graph.facebook.com/<?=$user_profile['id']?>/picture" /></a></td>
+				<td><?=$user_profile['name']?></td>
+				<td><?=$_SESSION['snapchat_username']?></td>
+				<td class="visibility-box">
+					<div class="btn-group">
+						<input type="checkbox" class="hider" <?=(!$hidden)?"checked":""?>>
+					</div>
+				</td>
+			</tr>
 <?php
 ################ BUILD TABLE ###################################
 
@@ -207,6 +213,7 @@ $sql = <<<SQL
 	SELECT *
 	  FROM user
 	  WHERE snapchat_username IS NOT NULL
+	    AND hidden = 0
 	  ORDER BY date_updated DESC
 SQL;
 
@@ -215,17 +222,18 @@ if(!$result = $db->query($sql)) {
 }
 
 while($row = $result->fetch_assoc()) {
+	if($row['snapchat_username'] == $_SESSION['snapchat_username']) continue;
 	?>
-	<tr>
-		<td><a href="//facebook.com/<?=$row['facebook_id']?>" target="_blank"><img src="//graph.facebook.com/<?=$row['facebook_id']?>/picture" /></a></td>
-		<td><?=$row['realname']?></td>
-		<td><?=$row['snapchat_username']?></td>
-		<td>
-			<div class="btn-group">
-				<input type="checkbox" class="switcher" data-user="<?=$row['snapchat_username']?>" <?=(isset($snapFriends[$row['snapchat_username']]))?"checked":""?> <?=($row['snapchat_username'] == $_SESSION['snapchat_username'])?'disabled':''?>>
-			</div>
-		</td>
-	</tr>
+			<tr>
+				<td><a href="//facebook.com/<?=$row['facebook_id']?>" target="_blank"><img src="//graph.facebook.com/<?=$row['facebook_id']?>/picture" /></a></td>
+				<td><?=$row['realname']?></td>
+				<td><?=$row['snapchat_username']?></td>
+				<td class="switcher-box">
+					<div class="btn-group">
+						<input type="checkbox" class="switcher" data-user="<?=$row['snapchat_username']?>" <?=(isset($snapFriends[$row['snapchat_username']]))?"checked":""?>>
+					</div>
+				</td>
+			</tr>
 	<?php
 }
 ?>
@@ -244,14 +252,15 @@ while($row = $result->fetch_assoc()) {
 	<script src="js/jquery.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/bootstrap-switch.js"></script>
+	<script src="js/bootstrap-tour.min.js"></script>
 	<script>
 		$(".switcher").bootstrapSwitch({
+			labelText: "<span class=\"glyphicon glyphicon-plus-sign\"></span>",
 			onText : "Added",
 			onColor: "success",
 			offText : "Nope",
 			offColor: "danger",
 			onSwitchChange: function(event, state) {
-				var method = (state)?'add':'delete';
 				var user = $(this).data('user');
 				$.ajax({
 					type: 'POST',
@@ -266,6 +275,46 @@ while($row = $result->fetch_assoc()) {
 				})
 			}
 		});
+		$(".hider").bootstrapSwitch({
+			labelText: "<span class=\"glyphicon glyphicon-eye-open\"></span>",
+			onText : "Visible",
+			onColor: "success",
+			offText : "Hidden",
+			offColor: "warning",
+			onSwitchChange: function(event, state) {
+				$.ajax({
+					type: 'POST',
+					url: 'hide.php',
+					data: {
+						method: (state)?'visible':'hidden'
+					},
+					success: function(data) {
+						console.log(data);
+					}
+				})
+			}
+		});
+
+		$(function() {
+			var tour = new Tour({
+				steps: [
+					{
+						element:".visibility-box",
+						title:"Visibility",
+						content: "You're automatically added to this list. You can remove yourself from it if you don't like having friends."
+					},
+					{
+						element:".switcher-box:eq(0)",
+						title:"Friends",
+						content: "Switch this on if you want these people to be your friend.",
+						placement:"top"
+					}
+				]
+			});
+			tour.init();
+			tour.start();
+		})
+
     </script>
 
   </body>
