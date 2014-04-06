@@ -33,7 +33,7 @@ if ($user) {
 
 /* save user/pass to session */
 if(isset($_POST['snapchat_username']) && isset($_POST['snapchat_password'])) {
-	$_SESSION['snapchat_username'] = $_POST['snapchat_username'];
+	$_SESSION['snapchat_username'] = strtolower($_POST['snapchat_username']);
 	$_SESSION['snapchat_password'] = $_POST['snapchat_password'];
 }
 
@@ -146,7 +146,7 @@ if(isset($user_id)) {
 	<div class="form-group">
 		<label class="col-sm-4 control-label" for="snapchat_username">Snapchat Username</label>
 		<div class="col-sm-4">
-			<input type="text" class="form-control" name="snapchat_username" id="snapchat_username" placeholder="Username" value="<?=$stored_username?>">
+			<input type="text" class="form-control" name="snapchat_username" id="snapchat_username" placeholder="Username" value="<?=(isset($stored_username))?$stored_username:''?>">
 		</div>
 	</div>
 	<div class="form-group">
@@ -165,6 +165,9 @@ if(isset($user_id)) {
 		Snapchat doesn't expose a public API, so this webpage has to pretend to be the actual snapchat app and login to
 		their servers. It wasn't until <a href="http://gibsonsec.org/snapchat/fulldisclosure/">GibSec</a> reverse-engineered their app that
 		anyone was able to mess around like this. Snapchat <i>probably</i> doesn't like us doing this.<br />
+<br />
+Your password isn't stored. The <a href="https://github.com/shipfam/boatsnap">source code</a> for this is public, if you don't believe me. If you're super-paranoid, you can <a href="nologin.php">skip</a>
+the login, but you'll have to type in everyone's usernames again manually, which sucks, but whatever buddy, you're the masochist, not me.
 </form>
 
 		<?php else: ?>
@@ -255,7 +258,6 @@ while($row = $result->fetch_assoc()) {
 	<script src="js/bootstrap-tour.min.js"></script>
 	<script>
 		$(".switcher").bootstrapSwitch({
-			labelText: "<span class=\"glyphicon glyphicon-plus-sign\"></span>",
 			onText : "Added",
 			onColor: "success",
 			offText : "Nope",
@@ -295,6 +297,7 @@ while($row = $result->fetch_assoc()) {
 			}
 		});
 
+/*
 		$(function() {
 			var tour = new Tour({
 				steps: [
@@ -313,7 +316,8 @@ while($row = $result->fetch_assoc()) {
 			});
 			tour.init();
 			tour.start();
-		})
+		});
+*/
 
     </script>
 
