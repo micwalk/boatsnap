@@ -168,6 +168,7 @@ if(isset($user_id)) {
 <br />
 Your password isn't stored. The <a href="https://github.com/shipfam/boatsnap">source code</a> for this is public, if you don't believe me. If you're super-paranoid, you can <a href="nologin.php">skip</a>
 the login, but you'll have to type in everyone's usernames again manually, which sucks, but whatever buddy, you're the masochist, not me.
+	</div>
 </form>
 
 		<?php else: ?>
