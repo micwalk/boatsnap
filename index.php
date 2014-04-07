@@ -88,7 +88,13 @@ if(isset($user_profile['id']) && $stmt = $db->prepare("SELECT user_id, snapchat_
 
 if(isset($user_id)) {
 	$stmt = $db->prepare("UPDATE user SET date_updated=now(), snapchat_username=?, realname=? WHERE user_id=?");
-	$stmt->bind_param("ssi", $_SESSION['snapchat_username'], $user_profile['name'], $user_id);
+	if(isset($_SESSION['snapchat_username'])) {
+		$s = $_SESSION['snapchat_username'];
+	}
+	else {
+		$s = $stored_username;
+	}
+	$stmt->bind_param("ssi", $s, $user_profile['name'], $user_id);
 	$stmt->execute();
 	$stmt->close();
 }
@@ -166,7 +172,7 @@ if(isset($user_id)) {
 		their servers. It wasn't until <a href="http://gibsonsec.org/snapchat/fulldisclosure/">GibSec</a> reverse-engineered their app that
 		anyone was able to mess around like this. Snapchat <i>probably</i> doesn't like us doing this.<br />
 <br />
-Your password isn't stored. The <a href="https://github.com/shipfam/boatsnap">source code</a> for this is public, if you don't believe me. If you're super-paranoid, you can <a href="nologin.php">skip</a>
+Your password isn't stored. The <a href="https://github.com/shipfam/boatsnap">source code</a> for this is open, if you don't believe me. If you're super-paranoid, you can <a href="nologin.php">skip</a>
 the login, but you'll have to type in everyone's usernames again manually, which sucks, but whatever buddy, you're the masochist, not me.
 	</div>
 </form>
@@ -321,7 +327,16 @@ while($row = $result->fetch_assoc()) {
 */
 
     </script>
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
+  ga('create', 'UA-47237641-1', 'shipfam.com');
+  ga('send', 'pageview');
+
+</script>	
   </body>
 </html>
 <?php
