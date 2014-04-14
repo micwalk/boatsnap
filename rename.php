@@ -1,4 +1,5 @@
 <?php
+ob_start();
 error_reporting(~0);
 ini_set('display_errors', 1);
 
@@ -51,6 +52,9 @@ foreach($snapchat->getFriends() as $friend) {
 	$o->returned = $snapchat->setDisplayName($friend->name, $display)?"OK":"Failed!";
 	echo "Setting \"$friend->name\" to \"$display\"... $o->returned<br />\n";
 	flush();
+	ob_flush();
+    sleep(1);
 }
 
+ob_end_flush();
 ?>
