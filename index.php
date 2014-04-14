@@ -384,6 +384,7 @@ while($row = $result->fetch_assoc()) {
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
   ga('create', 'UA-47237641-1', 'shipfam.com');
+  ga('require', 'displayfeatures');
   ga('send', 'pageview');
 
 </script>	

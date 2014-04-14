@@ -53,7 +53,7 @@ foreach($snapchat->getFriends() as $friend) {
 	echo "Setting \"$friend->name\" to \"$display\"... $o->returned<br />\n";
 	flush();
 	ob_flush();
-    sleep(1);
+    usleep(100);
 }
 
 ob_end_flush();
