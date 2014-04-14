@@ -148,7 +148,7 @@ if(isset($user_id)) {
 		<?php if (!$user): ?>
 			<p><a href="<?=$loginUrl?>"><img src="img/connect-fb.png" /></a></p>
 		<?php elseif( !isset($snapchat)): ?>
-<form class="form-horizontal" action="index.php" method="POST" role="form">
+<form class="form-horizontal" action="<?=$_SERVER['PHP_SELF']?>" method="POST" role="form">
 	<div class="form-group">
 		<label class="col-sm-4 control-label" for="snapchat_username">Snapchat Username</label>
 		<div class="col-sm-4">
