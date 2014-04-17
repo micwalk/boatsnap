@@ -1,0 +1,6 @@
+[submodule "facebook-php-sdk"]
+	   path = facebook-php-sdk
+	   url = https://github.com/facebook/facebook-php-sdk.git
+[submodule "php-snapchat"]
+	   path = php-snapchat
+	   url = https://github.com/JorgenPhi/php-snapchat.git
