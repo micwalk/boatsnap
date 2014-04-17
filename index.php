@@ -24,7 +24,7 @@ if($user) {
 }
 
 if ($user) {
-  $logoutUrl = $facebook->getLogoutUrl();
+  $logoutUrl = $facebook->getLogoutUrl(); //This logs out of facebook, but doesn't clear the session
 } else {
   $loginUrl = $facebook->getLoginUrl();
 }
@@ -127,16 +127,17 @@ if(isset($user_id)) {
 			<h2>Shipfam.com #Boatsnap</h2>
 			<p>
 			<?php if($user): ?>
-			You are <i><?=$user_profile['name']?></i> on the Facebook
+				You are <i><?=$user_profile['name']?></i> on the Facebook <a class="btn btn-default btn-xs" href="logout-fb.php">Logout</a>
 			<?php endif ?>
 
 			<?php if(isset($snapchat)): ?>
-			and <i><?=$snapchat->username?></i> on Snapchat <a class="btn btn-default btn-xs" href="logout.php">Logout</a>
+				<?php if($user): ?>and<?php else: ?>You are<?php endif ?>
+				<i><?=$snapchat->username?></i> on Snapchat <a class="btn btn-default btn-xs" href="logout.php">Logout</a>
 			<?php endif ?>
 			</p>
 
 
-		<?php if(isset($snapchat)): ?>
+		<?php if($user && isset($snapchat)): ?>
 		<ul class="nav nav-pills" id="tabs">
 			<li class="active"><a href="#add" data-toggle="pill">Add Users</a></li>
 			<li><a href="#rename" data-toggle="pill">Rename Users</a></li>
